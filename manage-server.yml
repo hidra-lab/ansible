@@ -1,0 +1,85 @@
+---
+- name: mutiple local groups
+  hosts: asia,ungrouped
+  tasks:
+           - group:
+                    name: "{{ item }}"
+                    state: present
+                    loop:
+                            - unggas
+                            - reptil
+                            - sate
+
+- name: multiple local users
+  hosts: asia, ungrouped
+  vars_files:
+          - vars/user_vars.yml
+  tasks:
+          - name: create user accounts
+            user:
+                    name: "{{ item.username }}"
+                    groups: "{{ item.groups }}"
+                    loop: "{{ users }}"
+
+- name: install package httpd,sshd,firewall in host not in asia
+  hosts: all:!asia
+  tasks:
+          - name: Install httpd, sshd, firewalld
+            yum
+                    name:
+                       - http
+                       - sshd
+                       - firewalld
+                    state: latest
+
+- name: install development packages
+  hosts: ~.(servera|severb).*
+  tasks:
+           - name: "@Development tools"
+             state: present
+             update_cache: yes
+
+- name: turn off firewall
+  hosts: ~.(serverc|severd).*
+  tasks:
+           - name: turn off firewall
+             state: stopped
+             enabled: false
+
+- name: install maria-db packages
+  hosts: development
+  tasks:
+          - name: install maria-db packages
+            yum
+                    name: mariadb
+                    state: latest
+
+- name: install tmux packages
+  hosts: production
+  tasks:
+          - name: install tmux packages
+            yum
+                    name: mariadb
+                    state: latest
+
+- name: start http, firewalld, sshd
+  hosts: all:!(serverc|severd)
+  tasks:
+           - name: start http, firewalld, sshd
+             service:
+                     state: stopped
+                     name:
+                       - http
+                       - firewalld
+                       - sshd
+                     state: started  
+                     enabled: true
+
+- name: using custom-motd roles
+  hosts: all
+  tasks:
+          - custom-motd
+
+- name: import playbook
+  import_playbook: time.yml
+

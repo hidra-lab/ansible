@@ -1,0 +1,19 @@
+- name: Time Synchronization
+  hosts: serverd.lab.example.com, serverc.lab.example.com, servera.lab.example.com
+  vars:
+          timesync_ntp_servers:
+                  - hostname: 0.jp.pool.ntp.org
+                    iburst: yes
+                  - hostname: 0.id.pool.ntp.org
+                    iburst: yes
+                  - hostname: 0.rhel.pool.ntp.org
+                    iburst: yes
+          timezone: Asia/Makasar
+  
+  roles:
+          - rhel-system-roles.timesync
+
+  tasks:
+          - name: Set timezone
+            timezone:
+                    name: {{ timezone }}

@@ -1,0 +1,12 @@
+---
+users:
+         - username: ayam
+           groups: unggas,sate
+         - username: bangau
+           groups: unggas
+         - username: cicak
+           groups: reptil
+         - username: kadal
+           groups: reptil
+         - username: kambing
+           groups: sate   
